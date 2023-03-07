@@ -1,9 +1,10 @@
+import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
+import { InputAdornment, TextField } from "@mui/material";
 import React, { useState } from "react";
-// Define the Props interface
+
 export interface IChatInputProps {
-  prop1: string;
-  prop2: string;
-  prop3: string;
+  drawerWidth: number;
+  isSideOpen: boolean;
 }
 // Define the State interface
 interface IChatInputState {
@@ -11,9 +12,8 @@ interface IChatInputState {
   stateProp2: number;
 }
 const ChatInput: React.FunctionComponent<IChatInputProps> = ({
-  prop1,
-  prop2,
-  prop3,
+  drawerWidth,
+  isSideOpen,
 }) => {
   // Declare the state using useState
   const [state, setState] = useState<IChatInputState>({
@@ -25,13 +25,36 @@ const ChatInput: React.FunctionComponent<IChatInputProps> = ({
     // Update the state
     setState({ ...state, stateProp1: "new value" });
   };
-  // Render the component
+
   return (
-    <div>
-      <h1>{prop1}</h1>
-      <p>{prop2}</p>
-      <button onClick={handleClick}>Click me</button>
-    </div>
+    <TextField
+      sx={{
+        position: "absolute",
+        bottom: 10,
+        right: 10,
+        width: isSideOpen ? `calc(100% - ${drawerWidth}px)` : "100%",
+        maxWidth: isSideOpen ? "75vw" : "95vw",
+        transition: "width 0.3s ease-in-out, max-width 0.3s ease-in-out",
+      }}
+      id="filled-multiline-flexible"
+      multiline
+      maxRows={4}
+      variant="outlined"
+      InputProps={{
+        endAdornment: (
+          <InputAdornment
+            position="end"
+            sx={{
+              position: "absolute",
+              bottom: 25,
+              right: 10,
+            }}
+          >
+            <SendOutlinedIcon />
+          </InputAdornment>
+        ),
+      }}
+    />
   );
 };
 export default ChatInput;

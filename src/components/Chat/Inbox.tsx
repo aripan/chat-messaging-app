@@ -1,7 +1,15 @@
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Autocomplete, Avatar, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Avatar,
+  Divider,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  TextField,
+} from "@mui/material";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -11,7 +19,8 @@ import List from "@mui/material/List";
 import { styled, useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import * as React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { users } from "../../utilities/Users";
 import Conversation from "./Conversation/Conversation";
 import UserListItem from "./UserListItem";
@@ -71,7 +80,8 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 
 const Inbox: React.FunctionComponent<IInboxProps> = () => {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(true);
+  const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -79,6 +89,13 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handleSignOut = () => {
+    console.log("signout working...");
+    navigate("/login", {
+      replace: true,
+    });
   };
 
   return (
@@ -158,7 +175,7 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
             sx={{
               width: "100%",
               maxWidth: 360,
-              maxHeight: "80vh",
+              maxHeight: "73vh",
               overflowX: "hidden",
               overflowY: "auto",
               bgcolor: "background.paper",
@@ -170,11 +187,36 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
               <UserListItem user={user} key={user.email} />
             ))}
           </List>
+          <Divider />
+          <ListItem alignItems="center">
+            <ListItemAvatar>
+              <Avatar alt="John Doe" src="/static/images/avatar/1.jpg" />
+            </ListItemAvatar>
+            <ListItemText
+              primary="John Doe"
+              secondary={
+                <React.Fragment>
+                  <Typography
+                    sx={{
+                      display: "inline",
+                      cursor: "pointer",
+                      color: "#2196f3",
+                    }}
+                    component="span"
+                    variant="body2"
+                    onClick={handleSignOut}
+                  >
+                    Sign Out
+                  </Typography>
+                </React.Fragment>
+              }
+            />
+          </ListItem>
         </Box>
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
-        <Conversation />
+        <Conversation drawerWidth={drawerWidth} isSideOpen={open} />
       </Main>
     </Box>
   );
