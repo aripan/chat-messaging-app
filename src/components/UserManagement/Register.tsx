@@ -31,8 +31,7 @@ import {
   SET_CONFIRM_PASSWORD_ERROR,
   SET_EMAIL,
   SET_EMAIL_ERROR,
-  SET_FIRST_NAME,
-  SET_LAST_NAME,
+  SET_NAME,
   SET_PASSWORD,
   SET_PASSWORD_ERROR,
   SET_SELECTED_QUESTION,
@@ -82,8 +81,7 @@ const Register: React.FunctionComponent<IRegisterProps> = () => {
     }
 
     if (
-      state.firstName &&
-      state.lastName &&
+      state.name &&
       state.email &&
       state.password &&
       state.confirmPassword &&
@@ -137,40 +135,18 @@ const Register: React.FunctionComponent<IRegisterProps> = () => {
             sx={{ mt: 3, maxWidth: 450 }}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
                 <TextField
-                  autoComplete="given-name"
-                  name="firstName"
+                  autoComplete="name"
+                  name="name"
                   required
                   fullWidth
-                  id="firstName"
-                  label="First Name"
+                  id="name"
+                  label="Name"
                   autoFocus
-                  value={state.firstName}
+                  value={state.name}
                   onChange={(e) =>
-                    dispatch({ type: SET_FIRST_NAME, payload: e.target.value })
-                  }
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <BadgeTwoToneIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                  value={state.lastName}
-                  onChange={(e) =>
-                    dispatch({ type: SET_LAST_NAME, payload: e.target.value })
+                    dispatch({ type: SET_NAME, payload: e.target.value })
                   }
                   InputProps={{
                     startAdornment: (

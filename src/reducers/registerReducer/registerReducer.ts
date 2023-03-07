@@ -1,9 +1,8 @@
-import { RESET_STATE, SET_ANSWER, SET_CONFIRM_PASSWORD, SET_CONFIRM_PASSWORD_ERROR, SET_EMAIL, SET_EMAIL_ERROR, SET_FIRST_NAME, SET_LAST_NAME, SET_PASSWORD, SET_PASSWORD_ERROR, SET_SELECTED_QUESTION } from "./action.types"
+import { RESET_STATE, SET_ANSWER, SET_CONFIRM_PASSWORD, SET_CONFIRM_PASSWORD_ERROR, SET_EMAIL, SET_EMAIL_ERROR, SET_NAME, SET_PASSWORD, SET_PASSWORD_ERROR, SET_SELECTED_QUESTION } from "./action.types"
 import { IActionState, IInitialState } from "./interfaces"
 
 export const registerReducerInitialState: IInitialState = {
-    firstName: "",
-    lastName: "",
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -16,13 +15,9 @@ export const registerReducerInitialState: IInitialState = {
 
 export const registerReducer = (state: IInitialState, action: IActionState) => {
     switch (action.type) {
-        case SET_FIRST_NAME:
+        case SET_NAME:
             return {
-                ...state, firstName: action.payload
-            }
-        case SET_LAST_NAME:
-            return {
-                ...state, lastName: action.payload
+                ...state, name: action.payload
             }
         case SET_EMAIL:
             return {

@@ -1,8 +1,7 @@
 import { ISecurityQuestionProps } from '../../utilities/SecurityQuestions/SecurityQuestions';
 
 export interface IInitialState {
-    firstName: string;
-    lastName: string;
+    name: string;
     email: string;
     password: string;
     confirmPassword: string;

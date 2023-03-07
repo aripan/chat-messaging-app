@@ -1,9 +1,7 @@
 
 export interface IInitialState {
-    email: string;
-    password: string;
-    emailError: boolean,
 
+isSidebarOpen: boolean;
 
 }
 export interface IActionState {
