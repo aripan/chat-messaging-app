@@ -1,118 +1,183 @@
-import {
-  Box,
-  Container,
-  createTheme,
-  CssBaseline,
-  Grid,
-  ThemeProvider,
-} from "@mui/material";
-import React, { useReducer } from "react";
-import {
-  inboxReducer,
-  inboxReducerInitialState,
-} from "../../reducers/inboxReducer/inboxReducer";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import MenuIcon from "@mui/icons-material/Menu";
+import { Autocomplete, Avatar, TextField } from "@mui/material";
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import CssBaseline from "@mui/material/CssBaseline";
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import { styled, useTheme } from "@mui/material/styles";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import * as React from "react";
+import { users } from "../../utilities/Users";
 import Conversation from "./Conversation/Conversation";
-import Sidebar from "./Sidebar/Sidebar";
-// Define the Props interface
+import UserListItem from "./UserListItem";
+
 export interface IInboxProps {}
-// Define the State interface
+
+const drawerWidth = 340;
+
+const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
+  open?: boolean;
+}>(({ theme, open }) => ({
+  flexGrow: 1,
+  padding: theme.spacing(3),
+  transition: theme.transitions.create("margin", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  marginLeft: `-${drawerWidth}px`,
+  ...(open && {
+    transition: theme.transitions.create("margin", {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    marginLeft: 0,
+  }),
+}));
+
+interface AppBarProps extends MuiAppBarProps {
+  open?: boolean;
+}
+
+const AppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== "open",
+})<AppBarProps>(({ theme, open }) => ({
+  transition: theme.transitions.create(["margin", "width"], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  ...(open && {
+    width: `calc(100% - ${drawerWidth}px)`,
+    marginLeft: `${drawerWidth}px`,
+    transition: theme.transitions.create(["margin", "width"], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  }),
+}));
+
+const DrawerHeader = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+  justifyContent: "flex-end",
+}));
 
 const Inbox: React.FunctionComponent<IInboxProps> = () => {
-  const [state, dispatch] = useReducer(inboxReducer, inboxReducerInitialState);
+  const theme = useTheme();
+  const [open, setOpen] = React.useState(false);
 
-  // const handleClick = () => {
-  //   // Update the state
-  //   setState({ ...state, stateProp1: "new value" });
-  // };
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
 
-  const theme = createTheme();
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container
-        component="main"
-        maxWidth="xl"
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline />
+      <AppBar position="fixed" open={open}>
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            sx={{ mr: 2, ...(open && { display: "none" }) }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+            Leo Mario
+          </Typography>
+          <IconButton
+            size="large"
+            aria-label="account of current user"
+            aria-controls="menu-appbar"
+            color="inherit"
+          >
+            <Avatar alt="Leo Mario" src="/static/images/avatar/2.jpg" />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <Drawer
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "90vh",
-          marginTop: 5,
-          //   border: "2px solid red",
+          width: drawerWidth,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: drawerWidth,
+            boxSizing: "border-box",
+          },
         }}
+        variant="persistent"
+        anchor="left"
+        open={open}
       >
-        <CssBaseline />
-        <Box
+        <DrawerHeader
           sx={{
             display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            width: "100%",
-            // border: "2px solid red",
+            flexDirection: "row",
+            justifyContent: "space-between",
           }}
         >
-          {state.isSidebarOpen ? (
-            <Grid container>
-              <Grid
-                item
-                xs={12}
-                sm={4}
-                lg={3}
-                sx={{
-                  height: "90vh",
-                  border: "2px solid green",
-                }}
-              >
-                <Sidebar
-                  isSidebarOpen={state.isSidebarOpen}
-                  dispatchToToggleSidebar={dispatch}
-                />
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                sm={8}
-                lg={9}
-                sx={{
-                  height: "90vh",
-                  border: "2px solid black",
-                }}
-              >
-                <Conversation />
-              </Grid>
-            </Grid>
-          ) : (
-            <Grid container>
-              <Grid
-                item
-                xs={0.5}
-                sx={{
-                  height: "90vh",
-                  border: "2px solid green",
-                  pr: 0.5,
-                }}
-              >
-                <Sidebar
-                  isSidebarOpen={state.isSidebarOpen}
-                  dispatchToToggleSidebar={dispatch}
-                />
-              </Grid>
-              <Grid
-                item
-                xs={11.5}
-                sx={{
-                  height: "90vh",
-                  border: "2px solid black",
-                }}
-              >
-                <Conversation />
-              </Grid>
-            </Grid>
-          )}
+          <Typography component={"h2"} variant={"h5"}>
+            {" "}
+            Chats
+          </Typography>
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === "ltr" ? (
+              <>
+                <ChevronLeftIcon fontSize="large" />
+              </>
+            ) : (
+              <ChevronRightIcon fontSize="large" />
+            )}
+          </IconButton>
+        </DrawerHeader>
+        <Box p={1}>
+          <Autocomplete
+            id="free-solo-demo"
+            freeSolo
+            options={users.map((user) => user.name)}
+            renderInput={(params) => (
+              <TextField {...params} label="search users..." />
+            )}
+            sx={{
+              margin: 1,
+            }}
+          />
+          <List
+            sx={{
+              width: "100%",
+              maxWidth: 360,
+              maxHeight: "80vh",
+              overflowX: "hidden",
+              overflowY: "auto",
+              bgcolor: "background.paper",
+              mb: 2,
+            }}
+          >
+            {" "}
+            {users.map((user) => (
+              <UserListItem user={user} key={user.email} />
+            ))}
+          </List>
         </Box>
-      </Container>
-    </ThemeProvider>
+      </Drawer>
+      <Main open={open}>
+        <DrawerHeader />
+        <Conversation />
+      </Main>
+    </Box>
   );
 };
+
 export default Inbox;
