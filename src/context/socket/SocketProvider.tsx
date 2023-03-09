@@ -35,7 +35,28 @@ const SocketProvider: React.FunctionComponent<ISocketProviderProps> = ({
     // eslint-disable-next-line
   }, []);
 
-  const startListeners = () => {};
+  const startListeners = () => {
+    // reconnect event
+    socket.io.on("reconnect", (attempt) => {
+      console.log("Reconnected on attempt: ", attempt);
+    });
+
+    // reconnect attempt event
+    socket.io.on("reconnect_attempt", (attempt) => {
+      console.log("Reconnection attempt: ", attempt);
+    });
+
+    // reconnect error
+    socket.io.on("reconnect_error", (error) => {
+      console.log("Reconnection error: ", error);
+    });
+
+    // reconnection failed
+    socket.io.on("reconnect_failed", () => {
+      console.log("Reconnection failure");
+      alert("We are unable to connect to the websocket. Please try again.");
+    });
+  };
 
   return (
     <SocketContextProvider value={{ SocketState, SocketDispatch }}>
