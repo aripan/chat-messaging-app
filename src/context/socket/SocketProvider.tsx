@@ -11,7 +11,7 @@ export interface ISocketProviderProps extends PropsWithChildren {}
 const SocketProvider: React.FunctionComponent<ISocketProviderProps> = ({
   children,
 }) => {
-  const socket = useSocket("ws://localhost:8080", {
+  const socket = useSocket(process.env.REACT_APP_WS_BASE!, {
     reconnectionAttempts: 5,
     reconnectionDelay: 1000,
     autoConnect: false,
@@ -29,13 +29,17 @@ const SocketProvider: React.FunctionComponent<ISocketProviderProps> = ({
     // save the socket in the context
     SocketDispatch({ type: "UPDATE_SOCKET", payload: socket });
 
-    // start listening for messages
+    // start listening events
     startListeners();
+
+    // start sending events
+    startSenders();
 
     // eslint-disable-next-line
   }, []);
 
   const startListeners = () => {
+    console.log("listening events coming from server... 🎧");
     // reconnect event
     socket.io.on("reconnect", (attempt) => {
       console.log("Reconnected on attempt: ", attempt);
@@ -56,6 +60,19 @@ const SocketProvider: React.FunctionComponent<ISocketProviderProps> = ({
       console.log("Reconnection failure");
       alert("We are unable to connect to the websocket. Please try again.");
     });
+  };
+
+  const startSenders = () => {
+    console.log("sending events to the server...🚀");
+
+    socket.emit(
+      "connect-to-server",
+      (email: string, uid: string, users: string[]) => {
+        console.log("connected to the server", email, uid, users);
+        SocketDispatch({ type: "UPDATE_UID", payload: uid });
+        SocketDispatch({ type: "MEMBER_JOINED", payload: users });
+      }
+    );
   };
 
   return (

@@ -8,6 +8,10 @@ export const socketReducer = (state: ISocketInitialState, action: ISocketActionS
             return {
                 ...state, socket: action.payload as Socket
             }
+        case "UPDATE_UID":
+            return {
+                ...state, uid: action.payload as string
+            }
         case 'MEMBER_JOINED':
             return {
                 ...state, users: action.payload as string[]

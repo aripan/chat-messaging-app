@@ -19,12 +19,6 @@ import {
 import React, { memo, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  RESET_STATE,
-  SET_EMAIL,
-  SET_EMAIL_ERROR,
-  SET_PASSWORD,
-} from "../../reducers/loginReducer/action.types";
-import {
   loginReducer,
   loginReducerInitialState,
 } from "../../reducers/loginReducer/loginReducer";
@@ -40,17 +34,17 @@ const Login: React.FunctionComponent<ILoginProps> = () => {
     const isEmailValid = useValidateEmail(state.email);
 
     if (!isEmailValid) {
-      dispatch({ type: SET_EMAIL_ERROR, payload: true });
+      dispatch({ type: "SET_EMAIL_ERROR", payload: true });
       return;
     } else {
-      dispatch({ type: SET_EMAIL_ERROR, payload: false });
+      dispatch({ type: "SET_EMAIL_ERROR", payload: false });
     }
 
     if (state.email && state.password && isEmailValid) {
       console.log(state);
 
       // clear data
-      dispatch({ type: RESET_STATE, payload: {} });
+      dispatch({ type: "RESET_STATE", payload: {} });
     } else {
       alert("Something went wrong!");
     }
@@ -104,7 +98,7 @@ const Login: React.FunctionComponent<ILoginProps> = () => {
                   autoComplete="email"
                   value={state.email}
                   onChange={(e) => {
-                    dispatch({ type: SET_EMAIL, payload: e.target.value });
+                    dispatch({ type: "SET_EMAIL", payload: e.target.value });
                   }}
                   InputProps={{
                     startAdornment: (
@@ -137,7 +131,7 @@ const Login: React.FunctionComponent<ILoginProps> = () => {
                   autoComplete="new-password"
                   value={state.password}
                   onChange={(e) =>
-                    dispatch({ type: SET_PASSWORD, payload: e.target.value })
+                    dispatch({ type: "SET_PASSWORD", payload: e.target.value })
                   }
                   InputProps={{
                     startAdornment: (

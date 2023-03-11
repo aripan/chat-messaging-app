@@ -25,18 +25,6 @@ import {
 import React, { memo, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  RESET_STATE,
-  SET_ANSWER,
-  SET_CONFIRM_PASSWORD,
-  SET_CONFIRM_PASSWORD_ERROR,
-  SET_EMAIL,
-  SET_EMAIL_ERROR,
-  SET_NAME,
-  SET_PASSWORD,
-  SET_PASSWORD_ERROR,
-  SET_SELECTED_QUESTION,
-} from "../../reducers/registerReducer/action.types";
-import {
   registerReducer,
   registerReducerInitialState,
 } from "../../reducers/registerReducer/registerReducer";
@@ -60,24 +48,24 @@ const Register: React.FunctionComponent<IRegisterProps> = () => {
     const isStrongPassword = useCheckPasswordStrength(state.password);
 
     if (!isEmailValid) {
-      dispatch({ type: SET_EMAIL_ERROR, payload: true });
+      dispatch({ type: "SET_EMAIL_ERROR", payload: true });
       return;
     } else {
-      dispatch({ type: SET_EMAIL_ERROR, payload: false });
+      dispatch({ type: "SET_EMAIL_ERROR", payload: false });
     }
 
     if (!isStrongPassword) {
-      dispatch({ type: SET_PASSWORD_ERROR, payload: true });
+      dispatch({ type: "SET_PASSWORD_ERROR", payload: true });
       return;
     } else {
-      dispatch({ type: SET_PASSWORD_ERROR, payload: false });
+      dispatch({ type: "SET_PASSWORD_ERROR", payload: false });
     }
 
     if (state.password !== state.confirmPassword) {
-      dispatch({ type: SET_CONFIRM_PASSWORD_ERROR, payload: true });
+      dispatch({ type: "SET_CONFIRM_PASSWORD_ERROR", payload: true });
       return;
     } else {
-      dispatch({ type: SET_CONFIRM_PASSWORD_ERROR, payload: false });
+      dispatch({ type: "SET_CONFIRM_PASSWORD_ERROR", payload: false });
     }
 
     if (
@@ -91,7 +79,7 @@ const Register: React.FunctionComponent<IRegisterProps> = () => {
       console.log(state);
 
       // clear data
-      dispatch({ type: RESET_STATE, payload: {} });
+      dispatch({ type: "RESET_STATE", payload: {} });
     } else {
       alert("Something went wrong!");
     }
@@ -146,7 +134,7 @@ const Register: React.FunctionComponent<IRegisterProps> = () => {
                   autoFocus
                   value={state.name}
                   onChange={(e) =>
-                    dispatch({ type: SET_NAME, payload: e.target.value })
+                    dispatch({ type: "SET_NAME", payload: e.target.value })
                   }
                   InputProps={{
                     startAdornment: (
@@ -167,7 +155,7 @@ const Register: React.FunctionComponent<IRegisterProps> = () => {
                   autoComplete="email"
                   value={state.email}
                   onChange={(e) => {
-                    dispatch({ type: SET_EMAIL, payload: e.target.value });
+                    dispatch({ type: "SET_EMAIL", payload: e.target.value });
                   }}
                   InputProps={{
                     startAdornment: (
@@ -200,7 +188,7 @@ const Register: React.FunctionComponent<IRegisterProps> = () => {
                   autoComplete="new-password"
                   value={state.password}
                   onChange={(e) =>
-                    dispatch({ type: SET_PASSWORD, payload: e.target.value })
+                    dispatch({ type: "SET_PASSWORD", payload: e.target.value })
                   }
                   InputProps={{
                     startAdornment: (
@@ -235,7 +223,7 @@ const Register: React.FunctionComponent<IRegisterProps> = () => {
                   value={state.confirmPassword}
                   onChange={(e) =>
                     dispatch({
-                      type: SET_CONFIRM_PASSWORD,
+                      type: "SET_CONFIRM_PASSWORD",
                       payload: e.target.value,
                     })
                   }
@@ -274,7 +262,7 @@ const Register: React.FunctionComponent<IRegisterProps> = () => {
                         (q) => q.id === selectedId
                       );
                       dispatch({
-                        type: SET_SELECTED_QUESTION,
+                        type: "SET_SELECTED_QUESTION",
                         payload: question,
                       });
                     }}
@@ -304,7 +292,7 @@ const Register: React.FunctionComponent<IRegisterProps> = () => {
                   autoComplete="off"
                   value={state.answer}
                   onChange={(e) =>
-                    dispatch({ type: SET_ANSWER, payload: e.target.value })
+                    dispatch({ type: "SET_ANSWER", payload: e.target.value })
                   }
                 />
               </Grid>

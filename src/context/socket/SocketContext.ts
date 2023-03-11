@@ -8,6 +8,8 @@ export interface ISocketContextProps {
 
 export const defaultSocketContextState: ISocketInitialState = {
     socket: undefined,
+    email: "",
+    uid: "",
     users: []
 }
 
