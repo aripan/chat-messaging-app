@@ -24,18 +24,6 @@ import {
 import React, { useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  ENABLE_SET_PASSWORD,
-  RESET_STATE,
-  SET_ANSWER,
-  SET_CONFIRM_PASSWORD,
-  SET_CONFIRM_PASSWORD_ERROR,
-  SET_EMAIL,
-  SET_EMAIL_ERROR,
-  SET_PASSWORD,
-  SET_PASSWORD_ERROR,
-  SET_SELECTED_QUESTION,
-} from "../../reducers/forgotPasswordReducer/action.types";
-import {
   forgotPasswordReducer,
   forgotPasswordReducerInitialState,
 } from "../../reducers/forgotPasswordReducer/forgotPasswordReducer";
@@ -59,16 +47,16 @@ const ForgotPassword: React.FunctionComponent<IForgotPasswordProps> = () => {
     const isEmailValid = useValidateEmail(state.email);
 
     if (!isEmailValid) {
-      dispatch({ type: SET_EMAIL_ERROR, payload: true });
+      dispatch({ type: "SET_EMAIL_ERROR", payload: true });
       return;
     } else {
-      dispatch({ type: SET_EMAIL_ERROR, payload: false });
+      dispatch({ type: "SET_EMAIL_ERROR", payload: false });
     }
 
     if (state.email && state.selectedQuestion && state.answer && isEmailValid) {
       console.log(state);
       setTimeout(() => {
-        dispatch({ type: ENABLE_SET_PASSWORD, payload: true });
+        dispatch({ type: "ENABLE_SET_PASSWORD", payload: true });
       }, 500);
     } else {
       alert("Something went wrong!");
@@ -80,24 +68,24 @@ const ForgotPassword: React.FunctionComponent<IForgotPasswordProps> = () => {
     const isStrongPassword = useCheckPasswordStrength(state.password);
 
     if (!isEmailValid) {
-      dispatch({ type: SET_EMAIL_ERROR, payload: true });
+      dispatch({ type: "SET_EMAIL_ERROR", payload: true });
       return;
     } else {
-      dispatch({ type: SET_EMAIL_ERROR, payload: false });
+      dispatch({ type: "SET_EMAIL_ERROR", payload: false });
     }
 
     if (!isStrongPassword) {
-      dispatch({ type: SET_PASSWORD_ERROR, payload: true });
+      dispatch({ type: "SET_PASSWORD_ERROR", payload: true });
       return;
     } else {
-      dispatch({ type: SET_PASSWORD_ERROR, payload: false });
+      dispatch({ type: "SET_PASSWORD_ERROR", payload: false });
     }
 
     if (state.password !== state.confirmPassword) {
-      dispatch({ type: SET_CONFIRM_PASSWORD_ERROR, payload: true });
+      dispatch({ type: "SET_CONFIRM_PASSWORD_ERROR", payload: true });
       return;
     } else {
-      dispatch({ type: SET_CONFIRM_PASSWORD_ERROR, payload: false });
+      dispatch({ type: "SET_CONFIRM_PASSWORD_ERROR", payload: false });
     }
 
     if (
@@ -110,7 +98,7 @@ const ForgotPassword: React.FunctionComponent<IForgotPasswordProps> = () => {
       console.log(state);
 
       // clear data
-      dispatch({ type: RESET_STATE, payload: {} });
+      dispatch({ type: "RESET_STATE", payload: {} });
     } else {
       alert("Something went wrong!");
     }
@@ -173,7 +161,7 @@ const ForgotPassword: React.FunctionComponent<IForgotPasswordProps> = () => {
                     autoComplete="email"
                     value={state.email}
                     onChange={(e) => {
-                      dispatch({ type: SET_EMAIL, payload: e.target.value });
+                      dispatch({ type: "SET_EMAIL", payload: e.target.value });
                     }}
                     InputProps={{
                       startAdornment: (
@@ -206,7 +194,10 @@ const ForgotPassword: React.FunctionComponent<IForgotPasswordProps> = () => {
                     autoComplete="new-password"
                     value={state.password}
                     onChange={(e) =>
-                      dispatch({ type: SET_PASSWORD, payload: e.target.value })
+                      dispatch({
+                        type: "SET_PASSWORD",
+                        payload: e.target.value,
+                      })
                     }
                     InputProps={{
                       startAdornment: (
@@ -241,7 +232,7 @@ const ForgotPassword: React.FunctionComponent<IForgotPasswordProps> = () => {
                     value={state.confirmPassword}
                     onChange={(e) =>
                       dispatch({
-                        type: SET_CONFIRM_PASSWORD,
+                        type: "SET_CONFIRM_PASSWORD",
                         payload: e.target.value,
                       })
                     }
@@ -277,7 +268,7 @@ const ForgotPassword: React.FunctionComponent<IForgotPasswordProps> = () => {
                     autoComplete="email"
                     value={state.email}
                     onChange={(e) => {
-                      dispatch({ type: SET_EMAIL, payload: e.target.value });
+                      dispatch({ type: "SET_EMAIL", payload: e.target.value });
                     }}
                     InputProps={{
                       startAdornment: (
@@ -317,7 +308,7 @@ const ForgotPassword: React.FunctionComponent<IForgotPasswordProps> = () => {
                           (q) => q.id === selectedId
                         );
                         dispatch({
-                          type: SET_SELECTED_QUESTION,
+                          type: "SET_SELECTED_QUESTION",
                           payload: question,
                         });
                       }}
@@ -344,7 +335,7 @@ const ForgotPassword: React.FunctionComponent<IForgotPasswordProps> = () => {
                     autoComplete="off"
                     value={state.answer}
                     onChange={(e) =>
-                      dispatch({ type: SET_ANSWER, payload: e.target.value })
+                      dispatch({ type: "SET_ANSWER", payload: e.target.value })
                     }
                   />
                 </Grid>

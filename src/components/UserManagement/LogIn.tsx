@@ -3,6 +3,7 @@ import AssignmentIndOutlinedIcon from "@mui/icons-material/AssignmentIndOutlined
 import MailLockTwoToneIcon from "@mui/icons-material/MailLockTwoTone";
 import VpnKeyTwoToneIcon from "@mui/icons-material/VpnKeyTwoTone";
 import {
+  Alert,
   Avatar,
   Box,
   Button,
@@ -16,6 +17,8 @@ import {
   ThemeProvider,
   Typography,
 } from "@mui/material";
+import axios from "axios";
+import jwt_decode from "jwt-decode";
 import React, { memo, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -41,12 +44,44 @@ const Login: React.FunctionComponent<ILoginProps> = () => {
     }
 
     if (state.email && state.password && isEmailValid) {
-      console.log(state);
-
+      userLogin(state.email, state.password);
       // clear data
       dispatch({ type: "RESET_STATE", payload: {} });
     } else {
       alert("Something went wrong!");
+    }
+  };
+
+  const userLogin = async (email: string, password: string): Promise<void> => {
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const { data, status } = await axios.post(
+        `${process.env.REACT_APP_BACKEND_BASE}/api/users/login`,
+        { email, password },
+        config
+      );
+
+      const decodedToken: {
+        email: string;
+        exp: number;
+        iat: number;
+        name: string;
+        _id: string;
+      } = jwt_decode(data.token);
+
+      if (status === 200 && decodedToken.email === state.email) {
+        localStorage.setItem("accessToken", data.token);
+        dispatch({ type: "LOGIN_FAILED", payload: false });
+        navigate("/inbox", {
+          replace: true,
+        });
+      }
+    } catch (error) {
+      dispatch({ type: "LOGIN_FAILED", payload: true });
     }
   };
 
@@ -75,6 +110,20 @@ const Login: React.FunctionComponent<ILoginProps> = () => {
             alignItems: "center",
           }}
         >
+          {state.isLoginFailed && (
+            <Alert
+              severity="error"
+              sx={{
+                maxWidth: 450,
+                width: "100%",
+                minWidth: 200,
+                mb: 10,
+              }}
+            >
+              Login failed- invalid email or password
+            </Alert>
+          )}
+
           <Avatar sx={{ m: 1, bgcolor: "#1565c0", width: 50, height: 50 }}>
             <AssignmentIndOutlinedIcon fontSize="large" />
           </Avatar>

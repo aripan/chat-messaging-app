@@ -92,7 +92,7 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
   };
 
   const handleSignOut = () => {
-    console.log("signout working...");
+    localStorage.clear();
     navigate("/login", {
       replace: true,
     });

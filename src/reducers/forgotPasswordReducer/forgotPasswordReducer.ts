@@ -1,7 +1,6 @@
-import { ENABLE_SET_PASSWORD, RESET_STATE, SET_ANSWER, SET_CONFIRM_PASSWORD, SET_CONFIRM_PASSWORD_ERROR, SET_EMAIL, SET_EMAIL_ERROR, SET_PASSWORD, SET_PASSWORD_ERROR, SET_SELECTED_QUESTION } from "./action.types"
-import { IActionState, IInitialState } from "./interfaces"
+import { IForgotPasswordActionState, IForgotPasswordInitialState } from "./types"
 
-export const forgotPasswordReducerInitialState: IInitialState = {
+export const forgotPasswordReducerInitialState: IForgotPasswordInitialState = {
     email: "",
     password: "",
     confirmPassword: "",
@@ -13,46 +12,46 @@ export const forgotPasswordReducerInitialState: IInitialState = {
     enableSetPassword: false,
 }
 
-export const forgotPasswordReducer = (state: IInitialState, action: IActionState) => {
+export const forgotPasswordReducer = (state: IForgotPasswordInitialState, action: IForgotPasswordActionState) => {
     switch (action.type) {
-        case SET_EMAIL:
+        case 'SET_EMAIL':
             return {
                 ...state, email: action.payload
             }
-        case SET_PASSWORD:
+        case 'SET_PASSWORD':
             return {
                 ...state, password: action.payload
             }
-        case SET_CONFIRM_PASSWORD:
+        case 'SET_CONFIRM_PASSWORD':
             return {
                 ...state, confirmPassword: action.payload
             }
-        case SET_SELECTED_QUESTION:
+        case 'SET_SELECTED_QUESTION':
             return {
                 ...state, selectedQuestion: action.payload
             }
-        case SET_ANSWER:
+        case 'SET_ANSWER':
             return {
                 ...state, answer: action.payload
             }
 
-        case SET_EMAIL_ERROR:
+        case 'SET_EMAIL_ERROR':
             return {
                 ...state, emailError: action.payload
             }
-        case SET_PASSWORD_ERROR:
+        case 'SET_PASSWORD_ERROR':
             return {
                 ...state, passwordError: action.payload
             }
-        case SET_CONFIRM_PASSWORD_ERROR:
+        case 'SET_CONFIRM_PASSWORD_ERROR':
             return {
                 ...state, confirmPasswordError: action.payload
             }
-        case ENABLE_SET_PASSWORD:
+        case 'ENABLE_SET_PASSWORD':
             return {
                 ...state, enableSetPassword: action.payload
             }
-        case RESET_STATE:
+        case 'RESET_STATE':
             return forgotPasswordReducerInitialState
         default:
             return state
