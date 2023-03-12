@@ -1,7 +1,8 @@
+import axios from "axios";
 import jwt_decode from "jwt-decode";
 import { useContext, useEffect, useState } from "react";
 import SocketContext from "../context/socket/SocketContext";
-import { IUseGetUserInfo, IUserInfo } from "./types";
+import { IUserFromDB, IUserInfo } from "./types";
 
 export const useValidateEmail = (email: string): boolean => {
   // regular expression for email validation
@@ -16,52 +17,40 @@ export const useCheckPasswordStrength = (password: string): boolean => {
   return strongPasswordRegex.test(password);
 }
 
-// export const useGetUserInfo = (data: any,): IUseGetUserInfo[] => {
-//   const [userInfo, setUserInfo] = useState<IUserInfo | null>(null)
-//   const [userInfoError, setUserInfoError] = useState<any>(null);
-//   const { socket, email, uid } = useContext(SocketContext).SocketState;
-//   console.log("🚀 ~ file: hooks.ts:23 ~ useGetUserInfo ~ socket:", socket)
-
-//   useEffect(() => {
-//     const getUserInfo = async () => {
-
-//       try {
-//         const decodedToken: {
-//           email: string;
-//           exp: number;
-//           iat: number;
-//           name: string;
-//           _id: string;
-//         } = await jwt_decode(data);
-
-//         const joinedUser = {
-//           email: decodedToken.email,
-//           name: decodedToken.name,
-//           uid: socket?.id,
-//         };
-
-//         setUserInfo(joinedUser)
-//       } catch (err) {
-//         setUserInfoError(err)
-//       }
-
-//     }
-//     socket && getUserInfo()
-
-//   }, [data, socket])
-
-//   return [userInfo, userInfoError]
-
-// }
-
-
-export const useGetUserInfo = (data: any): IUseGetUserInfo[] => {
+export const useUpdateUsersList = (tokenData: any) => {
+  const { socket } = useContext(SocketContext).SocketState;
+  const [usersList, setUsersList] = useState<IUserInfo[]>([])
+  const [usersFromDB, setUsersFromDB] = useState<IUserFromDB[]>([])
   const [userInfo, setUserInfo] = useState<IUserInfo | null>(null);
   const [userInfoError, setUserInfoError] = useState<any>(null);
-  const { socket } = useContext(SocketContext).SocketState;
+  const [isSocketConnected, setIsSocketConnected] = useState<boolean>(false);
 
   useEffect(() => {
-    const getUserInfo = async () => {
+    const fetchAllUsersFromDB = async () => {
+      try {
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${tokenData}`,
+          },
+        };
+        const { data } = await axios.get(
+          `${process.env.REACT_APP_BACKEND_BASE}/api/users`, config
+        );
+
+        setUsersFromDB((usersFromDB) => [...usersFromDB, ...data]);
+
+      } catch (error) {
+        console.log(error)
+      }
+    };
+
+    fetchAllUsersFromDB()
+  }, [tokenData])
+
+
+  useEffect(() => {
+    const getJoinedUserInfo = async () => {
       try {
         const decodedToken: {
           email: string;
@@ -69,7 +58,7 @@ export const useGetUserInfo = (data: any): IUseGetUserInfo[] => {
           iat: number;
           name: string;
           _id: string;
-        } = await jwt_decode(data);
+        } = await jwt_decode(tokenData);
 
         const joinedUser = {
           email: decodedToken.email,
@@ -78,6 +67,11 @@ export const useGetUserInfo = (data: any): IUseGetUserInfo[] => {
         };
 
         setUserInfo(joinedUser)
+
+        // Check if the user already exists in the usersList before adding them
+        if (!usersList.find((user: IUserInfo) => user.email === joinedUser.email)) {
+          setUsersList((prevUsersList: IUserInfo[]) => [...prevUsersList, joinedUser]);
+        }
       } catch (err) {
         setUserInfoError(err)
       }
@@ -87,6 +81,7 @@ export const useGetUserInfo = (data: any): IUseGetUserInfo[] => {
       // Set up an event listener to update the uid property of joinedUser
       // when the socket connects
       const updateUid = () => {
+        setIsSocketConnected(true);
         setUserInfo(userInfo => {
           if (userInfo) {
             return {
@@ -99,7 +94,7 @@ export const useGetUserInfo = (data: any): IUseGetUserInfo[] => {
       };
 
       socket.on('connect', updateUid);
-      getUserInfo();
+      getJoinedUserInfo();
 
       // Clean up the event listener when the component unmounts or the socket changes
       return () => {
@@ -107,7 +102,23 @@ export const useGetUserInfo = (data: any): IUseGetUserInfo[] => {
       };
     }
 
-  }, [data, socket]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokenData, socket]);
 
-  return [userInfo, userInfoError];
+  useEffect(() => {
+    if (isSocketConnected) {
+      // Update the usersList when the socket connects
+      setUsersList((prevUsersList: IUserInfo[]) => {
+        const updatedUsersList = prevUsersList.map(user => {
+          if (user.email === userInfo?.email) {
+            return userInfo;
+          }
+          return user;
+        });
+        return updatedUsersList;
+      });
+    }
+  }, [isSocketConnected, userInfo]);
+
+  return [usersList, userInfo, userInfoError, usersFromDB];
 };

@@ -40,6 +40,16 @@ const SocketProvider: React.FunctionComponent<ISocketProviderProps> = ({
 
   const startListeners = () => {
     console.log("listening events coming from server... 🎧");
+
+    // // user connected event
+    // socket.on("user_connected", (users: string[]) => {
+    //   console.log("connected to the websocket server 🎉", users);
+    // });
+    // // user disconnected event
+    // socket.on("user_disconnected", (users: string[]) => {
+    //   console.log("disconnected to the websocket server 🏃", users);
+    // });
+
     // reconnect event
     socket.io.on("reconnect", (attempt) => {
       console.log("Reconnected on attempt: ", attempt);
@@ -69,7 +79,6 @@ const SocketProvider: React.FunctionComponent<ISocketProviderProps> = ({
       "connect-to-server",
       (email: string, uid: string, users: string[]) => {
         console.log("connected to the server", email, uid, users);
-        SocketDispatch({ type: "UPDATE_UID", payload: uid });
         SocketDispatch({ type: "MEMBER_JOINED", payload: users });
       }
     );

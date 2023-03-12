@@ -12,3 +12,10 @@ export interface IUseGetUserInfo {
     },
     error: any
 }
+export interface IUserFromDB {
+    _id: string;
+    name: string;
+    email: string;
+    selectedQuestion: string;
+    answer: string;
+}

@@ -9,20 +9,16 @@ export const socketReducer = (state: ISocketInitialState, action: ISocketActionS
             return {
                 ...state, socket: action.payload as Socket
             }
-        case "UPDATE_UID":
-            return {
-                ...state, uid: action.payload as string
-            }
         case 'MEMBER_JOINED':
 
-            if (typeof action.payload !== 'object' || action.payload === null || !('email' in action.payload) || !('users' in action.payload)) {
-                return state;
-              }
-            const { email, users } = action.payload;
+            // if (typeof action.payload !== 'object' || action.payload === null || !('email' in action.payload) || !('users' in action.payload)) {
+            //     return state;
+            //   }
+            // const { email, users } = action.payload;
 
 
             return {
-                ...state, email:email , users: users
+                ...state, users: [...state.users, action.payload],
             }
         case 'MEMBER_LEFT':
             return {

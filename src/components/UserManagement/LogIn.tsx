@@ -21,22 +21,16 @@ import axios from "axios";
 import jwt_decode from "jwt-decode";
 import React, { memo, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
-import { defaultSocketContextState } from "../../context/socket/SocketContext";
 import {
   loginReducer,
   loginReducerInitialState,
 } from "../../reducers/loginReducer/loginReducer";
-import { socketReducer } from "../../reducers/socket/socketReducer";
 import { useValidateEmail } from "../../shared-hooks/hooks";
 
 export interface ILoginProps {}
 
 const Login: React.FunctionComponent<ILoginProps> = () => {
   const [state, dispatch] = useReducer(loginReducer, loginReducerInitialState);
-  const [SocketState, SocketDispatch] = useReducer(
-    socketReducer,
-    defaultSocketContextState
-  );
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -79,22 +73,9 @@ const Login: React.FunctionComponent<ILoginProps> = () => {
         _id: string;
       } = jwt_decode(data.token);
 
-      const joinedUser = {
-        email: data.email,
-        name: data.name,
-        uid: data._id,
-      };
-
       if (status === 200 && decodedToken.email === state.email) {
         localStorage.setItem("accessToken", data.token);
         dispatch({ type: "LOGIN_FAILED", payload: false });
-        SocketDispatch({
-          type: "MEMBER_JOINED",
-          payload: {
-            email: data.email,
-            users: [...SocketState.users, joinedUser],
-          },
-        });
         navigate("/inbox", {
           replace: true,
         });

@@ -19,10 +19,11 @@ import List from "@mui/material/List";
 import { styled, useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGetUserInfo } from "../../shared-hooks/hooks";
-import { users } from "../../utilities/Users";
+import SocketContext from "../../context/socket/SocketContext";
+import { useUpdateUsersList } from "../../shared-hooks/hooks";
+import { IUserFromDB } from "../../shared-hooks/types";
 import Conversation from "./Conversation/Conversation";
 import UserListItem from "./UserListItem";
 
@@ -83,10 +84,20 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
   const theme = useTheme();
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
-  const [userInfo, userInfoError] = useGetUserInfo(
+
+  const [usersList, userInfo, userInfoError, usersFromDB] = useUpdateUsersList(
     localStorage.getItem("accessToken") && localStorage.getItem("accessToken")
   );
-  console.log("🚀 ~ file: Inbox.tsx:89 ~ userInfo:", userInfo, userInfoError);
+  console.log(
+    "🚀 ~ file: Inbox.tsx:89 ~ userInfo:",
+    usersList,
+    userInfo,
+    userInfoError,
+    usersFromDB
+  );
+
+  const { users } = useContext(SocketContext).SocketState;
+  console.log("🚀 ~ file: Inbox.tsx:102 ~ users:", users);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -169,7 +180,7 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
           <Autocomplete
             id="free-solo-demo"
             freeSolo
-            options={users.map((user) => user.name)}
+            options={usersFromDB.map((user: IUserFromDB) => user.name)}
             renderInput={(params) => (
               <TextField {...params} label="search users..." />
             )}
@@ -181,7 +192,7 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
             sx={{
               width: "100%",
               maxWidth: 360,
-              maxHeight: "73vh",
+              height: "73vh",
               overflowX: "hidden",
               overflowY: "auto",
               bgcolor: "background.paper",
@@ -189,8 +200,8 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
             }}
           >
             {" "}
-            {users.map((user) => (
-              <UserListItem user={user} key={user.email} />
+            {usersFromDB.map((user: IUserFromDB) => (
+              <UserListItem user={user} key={user._id} />
             ))}
           </List>
           <Divider />
