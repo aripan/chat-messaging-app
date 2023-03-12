@@ -5,7 +5,6 @@ import "@fontsource/roboto/700.css";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
-import SocketProvider from "./context/socket/SocketProvider";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 
@@ -14,9 +13,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <BrowserRouter>
-    <SocketProvider>
-      <App />
-    </SocketProvider>
+    <App />
   </BrowserRouter>
 );
 // root.render(

@@ -33,7 +33,7 @@ const SocketProvider: React.FunctionComponent<ISocketProviderProps> = ({
     startListeners();
 
     // start sending events
-    startSenders();
+    // startSenders();
 
     // eslint-disable-next-line
   }, []);

@@ -21,6 +21,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useGetUserInfo } from "../../shared-hooks/hooks";
 import { users } from "../../utilities/Users";
 import Conversation from "./Conversation/Conversation";
 import UserListItem from "./UserListItem";
@@ -82,6 +83,10 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
   const theme = useTheme();
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
+  const [userInfo, userInfoError] = useGetUserInfo(
+    localStorage.getItem("accessToken") && localStorage.getItem("accessToken")
+  );
+  console.log("🚀 ~ file: Inbox.tsx:89 ~ userInfo:", userInfo, userInfoError);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -93,6 +98,7 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
 
   const handleSignOut = () => {
     localStorage.clear();
+    console.clear();
     navigate("/login", {
       replace: true,
     });

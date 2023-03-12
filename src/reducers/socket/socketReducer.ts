@@ -1,5 +1,6 @@
 import { Socket } from "socket.io-client"
-import { ISocketActionState, ISocketInitialState } from "./interface"
+import { ISocketActionState, ISocketInitialState } from "./types"
+
 
 export const socketReducer = (state: ISocketInitialState, action: ISocketActionState) => {
     console.log("🚀 ~ file: socketReducer.ts:5 ~ socketReducer ~ state:", state, action)
@@ -13,8 +14,15 @@ export const socketReducer = (state: ISocketInitialState, action: ISocketActionS
                 ...state, uid: action.payload as string
             }
         case 'MEMBER_JOINED':
+
+            if (typeof action.payload !== 'object' || action.payload === null || !('email' in action.payload) || !('users' in action.payload)) {
+                return state;
+              }
+            const { email, users } = action.payload;
+
+
             return {
-                ...state, users: action.payload as string[]
+                ...state, email:email , users: users
             }
         case 'MEMBER_LEFT':
             return {
