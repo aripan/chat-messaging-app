@@ -5,7 +5,9 @@ import {
   defaultSocketContextState,
   SocketContextProvider,
 } from "./SocketContext";
+
 // Define the Props interface
+// After React 18, need to use PropsWithChildren otherwise providing children won't work
 export interface ISocketProviderProps extends PropsWithChildren {}
 
 const SocketProvider: React.FunctionComponent<ISocketProviderProps> = ({
@@ -14,7 +16,7 @@ const SocketProvider: React.FunctionComponent<ISocketProviderProps> = ({
   const socket = useSocket(process.env.REACT_APP_WS_BASE!, {
     reconnectionAttempts: 5,
     reconnectionDelay: 1000,
-    autoConnect: false,
+    autoConnect: false, // That can be set to true or false later on
   });
 
   const [SocketState, SocketDispatch] = useReducer(
@@ -40,16 +42,20 @@ const SocketProvider: React.FunctionComponent<ISocketProviderProps> = ({
 
   const startListeners = () => {
     console.log("listening events coming from server... 🎧");
+    /** custom events emitted by the server */
+    // user connected event
+    socket.on("user-connected", (users: string[]) => {
+      console.log("connected to the websocket server 🎉", users);
+      SocketDispatch({ type: "MEMBER_JOINED", payload: users });
+    });
 
-    // // user connected event
-    // socket.on("user_connected", (users: string[]) => {
-    //   console.log("connected to the websocket server 🎉", users);
-    // });
-    // // user disconnected event
-    // socket.on("user_disconnected", (users: string[]) => {
-    //   console.log("disconnected to the websocket server 🏃", users);
-    // });
+    // user disconnected event
+    socket.on("user-disconnected", (users: string[]) => {
+      console.log("users still connected to the websocket server 🏃", users);
+      SocketDispatch({ type: "MEMBER_LEFT", payload: users });
+    });
 
+    /** events related to Socket.IO connection */
     // reconnect event
     socket.io.on("reconnect", (attempt) => {
       console.log("Reconnected on attempt: ", attempt);
@@ -74,14 +80,6 @@ const SocketProvider: React.FunctionComponent<ISocketProviderProps> = ({
 
   const startSenders = () => {
     console.log("sending events to the server...🚀");
-
-    socket.emit(
-      "connect-to-server",
-      (email: string, uid: string, users: string[]) => {
-        console.log("connected to the server", email, uid, users);
-        SocketDispatch({ type: "MEMBER_JOINED", payload: users });
-      }
-    );
   };
 
   return (

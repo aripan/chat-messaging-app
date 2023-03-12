@@ -10,19 +10,12 @@ export const socketReducer = (state: ISocketInitialState, action: ISocketActionS
                 ...state, socket: action.payload as Socket
             }
         case 'MEMBER_JOINED':
-
-            // if (typeof action.payload !== 'object' || action.payload === null || !('email' in action.payload) || !('users' in action.payload)) {
-            //     return state;
-            //   }
-            // const { email, users } = action.payload;
-
-
             return {
-                ...state, users: [...state.users, action.payload],
+                ...state, users: action.payload,
             }
         case 'MEMBER_LEFT':
             return {
-                ...state, users: action.payload as string[]
+                ...state, users: action.payload
             }
         default:
             return state

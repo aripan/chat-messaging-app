@@ -19,9 +19,8 @@ import List from "@mui/material/List";
 import { styled, useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import SocketContext from "../../context/socket/SocketContext";
 import { useUpdateUsersList } from "../../shared-hooks/hooks";
 import { IUserFromDB } from "../../shared-hooks/types";
 import Conversation from "./Conversation/Conversation";
@@ -85,19 +84,9 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
 
-  const [usersList, userInfo, userInfoError, usersFromDB] = useUpdateUsersList(
+  const [activeUsersList] = useUpdateUsersList(
     localStorage.getItem("accessToken") && localStorage.getItem("accessToken")
   );
-  console.log(
-    "🚀 ~ file: Inbox.tsx:89 ~ userInfo:",
-    usersList,
-    userInfo,
-    userInfoError,
-    usersFromDB
-  );
-
-  const { users } = useContext(SocketContext).SocketState;
-  console.log("🚀 ~ file: Inbox.tsx:102 ~ users:", users);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -180,7 +169,7 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
           <Autocomplete
             id="free-solo-demo"
             freeSolo
-            options={usersFromDB.map((user: IUserFromDB) => user.name)}
+            options={activeUsersList.map((user: IUserFromDB) => user.name)}
             renderInput={(params) => (
               <TextField {...params} label="search users..." />
             )}
@@ -200,7 +189,7 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
             }}
           >
             {" "}
-            {usersFromDB.map((user: IUserFromDB) => (
+            {activeUsersList.map((user: IUserFromDB) => (
               <UserListItem user={user} key={user._id} />
             ))}
           </List>

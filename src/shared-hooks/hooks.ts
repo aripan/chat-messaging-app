@@ -18,7 +18,7 @@ export const useCheckPasswordStrength = (password: string): boolean => {
 }
 
 export const useUpdateUsersList = (tokenData: any) => {
-  const { socket } = useContext(SocketContext).SocketState;
+  const { socket, users } = useContext(SocketContext).SocketState;
   const [usersList, setUsersList] = useState<IUserInfo[]>([])
   const [usersFromDB, setUsersFromDB] = useState<IUserFromDB[]>([])
   const [userInfo, setUserInfo] = useState<IUserInfo | null>(null);
@@ -94,6 +94,7 @@ export const useUpdateUsersList = (tokenData: any) => {
       };
 
       socket.on('connect', updateUid);
+
       getJoinedUserInfo();
 
       // Clean up the event listener when the component unmounts or the socket changes
@@ -117,8 +118,37 @@ export const useUpdateUsersList = (tokenData: any) => {
         });
         return updatedUsersList;
       });
-    }
-  }, [isSocketConnected, userInfo]);
+      socket?.emit(
+        "connect-to-server",
+        {
+          email: userInfo?.email,
+          uid: userInfo?.uid,
+        }
+      );
 
-  return [usersList, userInfo, userInfoError, usersFromDB];
+    }
+
+  }, [isSocketConnected, socket, userInfo]);
+
+  const activeUsersList = users && usersFromDB && getActiveUsersOnly(users, usersFromDB)
+
+  console.log("🚀 ~ file: hooks.ts:22 ~ useUpdateUsersList ~ users:", activeUsersList)
+
+  //! currently i don't needed them and so just commented out for now
+  // return [usersList, userInfo, userInfoError, activeUsersList];
+  return [activeUsersList];
 };
+
+
+const getActiveUsersOnly =(usersListFromSocket: {email: string, uid: string}[], usersListFromDB: IUserFromDB[]) => {
+  const activeUsers: IUserFromDB[] = [];
+
+  usersListFromSocket.forEach(obj1 => {
+    const matchingObj = usersListFromDB.filter(obj2 => obj2.email === obj1.email)[0];
+    if (matchingObj) {
+      activeUsers.push(matchingObj);
+    }
+  });
+
+  return activeUsers;
+}
