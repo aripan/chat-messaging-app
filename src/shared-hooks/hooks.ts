@@ -1,7 +1,7 @@
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import { useContext, useEffect, useState } from "react";
-import SocketContext from "../context/socket/SocketContext";
+import SocketContext from "../socket/socketContext/SocketContext";
 import { IUserFromDB, IUserInfo } from "./types";
 
 export const useValidateEmail = (email: string): boolean => {

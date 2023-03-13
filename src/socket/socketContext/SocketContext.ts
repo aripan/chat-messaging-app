@@ -1,5 +1,6 @@
 import { createContext } from "react";
-import { ISocketActionState, ISocketInitialState } from "../../reducers/socket/types";
+import { ISocketActionState, ISocketInitialState } from "../socketReducer/types";
+
 
 export interface ISocketContextProps {
     SocketState: ISocketInitialState;

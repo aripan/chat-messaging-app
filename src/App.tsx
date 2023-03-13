@@ -4,7 +4,7 @@ import Inbox from "./components/Chat/Inbox";
 import ForgotPassword from "./components/UserManagement/ForgotPassword";
 import Login from "./components/UserManagement/LogIn";
 import Register from "./components/UserManagement/Register";
-import SocketProvider from "./context/socket/SocketProvider";
+import SocketProvider from "./socket/socketContext/SocketProvider";
 
 export interface IAppProps {}
 

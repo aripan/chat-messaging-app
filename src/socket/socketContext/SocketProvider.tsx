@@ -1,6 +1,6 @@
 import React, { PropsWithChildren, useEffect, useReducer } from "react";
-import { socketReducer } from "../../reducers/socket/socketReducer";
-import { useSocket } from "../../shared-hooks/useSocket";
+import { socketReducer } from "../socketReducer/socketReducer";
+import { useSocket } from "../useSocket";
 import {
   defaultSocketContextState,
   SocketContextProvider,
