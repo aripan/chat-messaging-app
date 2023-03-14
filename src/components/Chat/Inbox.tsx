@@ -22,9 +22,14 @@ import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUpdateUsersList } from "../../shared-hooks/hooks";
+import {
+  useCurrentUser,
+  useSelectedUser,
+} from "../../shared-hooks/recoil-hooks/hooks";
 import { IUserFromDB } from "../../shared-hooks/types";
 import Conversation from "./Conversation/Conversation";
 import UserListItem from "./UserListItem";
+import jwt_decode from "jwt-decode";
 
 export interface IInboxProps {}
 
@@ -83,10 +88,15 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
   const theme = useTheme();
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
-
   const [activeUsersList] = useUpdateUsersList(
     localStorage.getItem("accessToken") && localStorage.getItem("accessToken")
   );
+  const [filteredOptions, setFilteredOptions] = useState(activeUsersList);
+  const [selectedUser] = useSelectedUser();
+  const [selectedOptionFromSearchBar, setSelectedOptionFromSearchBar] =
+    useState<string | null>(null);
+  const [searchedUser, setSearchedUser] = useState<string>("");
+  const [currentUser, setCurrentUser] = useCurrentUser();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -95,6 +105,33 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const handleSearch = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    console.log(e.target.value);
+    const searchedValue = e.target.value;
+    setSearchedUser(searchedValue);
+
+    if (searchedValue.length > 1) {
+      setFilteredOptions(
+        activeUsersList
+          .filter((user: IUserFromDB) => user.email !== currentUser.email)
+          .filter((activeUser: any) =>
+            activeUser.name.toLowerCase().includes(searchedValue)
+          )
+      );
+    }
+  };
+
+  if (typeof window !== "undefined") {
+    const token: any = localStorage.getItem("accessToken");
+    const decodedToken: any = jwt_decode(token);
+    const currentUser = activeUsersList?.find(
+      (user: any) => user.email === decodedToken.email
+    );
+    setCurrentUser(currentUser!);
+  }
 
   const handleSignOut = () => {
     localStorage.clear();
@@ -119,7 +156,7 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Leo Mario
+            {selectedUser.name || activeUsersList[0]?.name || ""}
           </Typography>
           <IconButton
             size="large"
@@ -127,7 +164,10 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
             aria-controls="menu-appbar"
             color="inherit"
           >
-            <Avatar alt="Leo Mario" src="/static/images/avatar/2.jpg" />
+            <Avatar
+              alt={selectedUser.name || activeUsersList[0]?.name || ""}
+              src="/static/images/avatar/2.jpg"
+            />
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -169,9 +209,18 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
           <Autocomplete
             id="free-solo-demo"
             freeSolo
-            options={activeUsersList.map((user: IUserFromDB) => user.name)}
+            options={activeUsersList
+              .filter((user: IUserFromDB) => user.email !== currentUser?.email)
+              .map((user: IUserFromDB) => user.name)}
+            onChange={(event, value) => setSelectedOptionFromSearchBar(value)}
             renderInput={(params) => (
-              <TextField {...params} label="search users..." />
+              <TextField
+                {...params}
+                label="search users..."
+                onChange={(
+                  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+                ) => handleSearch(e)}
+              />
             )}
             sx={{
               margin: 1,
@@ -189,17 +238,40 @@ const Inbox: React.FunctionComponent<IInboxProps> = () => {
             }}
           >
             {" "}
-            {activeUsersList.map((user: IUserFromDB) => (
-              <UserListItem user={user} key={user._id} />
-            ))}
+            {selectedOptionFromSearchBar
+              ? activeUsersList
+                  .filter(
+                    (user: IUserFromDB) => user.email !== currentUser?.email
+                  )
+                  .filter(
+                    (user: IUserFromDB) =>
+                      user.name === selectedOptionFromSearchBar
+                  )
+                  .map((user: IUserFromDB) => (
+                    <UserListItem user={user} key={user._id} />
+                  ))
+              : searchedUser && filteredOptions.length > 0
+              ? filteredOptions.map((filteredUser) => (
+                  <UserListItem user={filteredUser} key={filteredUser._id} />
+                ))
+              : activeUsersList
+                  .filter(
+                    (user: IUserFromDB) => user.email !== currentUser?.email
+                  )
+                  .map((user: IUserFromDB) => (
+                    <UserListItem user={user} key={user._id} />
+                  ))}
           </List>
           <Divider />
           <ListItem alignItems="center">
             <ListItemAvatar>
-              <Avatar alt="John Doe" src="/static/images/avatar/1.jpg" />
+              <Avatar
+                alt={currentUser?.name}
+                src="/static/images/avatar/1.jpg"
+              />
             </ListItemAvatar>
             <ListItemText
-              primary="John Doe"
+              primary={currentUser?.name}
               secondary={
                 <React.Fragment>
                   <Typography

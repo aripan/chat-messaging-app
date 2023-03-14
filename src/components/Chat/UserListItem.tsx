@@ -5,35 +5,37 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
+import { useSelectedUser } from "../../shared-hooks/recoil-hooks/hooks";
+import { IUserFromDB } from "../../shared-hooks/types";
 // Define the Props interface
 export interface IUserListItemProps {
-  user: {
-    name: string;
-    email: string;
-  };
+  user: IUserFromDB;
 }
 // Define the State interface
-interface IUserListItemState {
-  stateProp1: string;
-  stateProp2: number;
-}
+interface IUserListItemState {}
 const UserListItem: React.FunctionComponent<IUserListItemProps> = ({
   user,
 }) => {
-  // Declare the state using useState
-  const [state, setState] = useState<IUserListItemState>({
-    stateProp1: "",
-    stateProp2: 0,
-  });
+  const [, setSelectedUser] = useSelectedUser();
+
   // Handle events
-  const handleClick = () => {
-    // Update the state
-    setState({ ...state, stateProp1: "new value" });
+  const handleClick = (
+    e: React.MouseEvent<HTMLLIElement, MouseEvent>,
+    user: IUserFromDB
+  ) => {
+    console.log(user);
+    setSelectedUser(user);
   };
   // Render the component
   return (
-    <ListItem alignItems="flex-start">
+    <ListItem
+      alignItems="flex-start"
+      onClick={(e) => handleClick(e, user)}
+      sx={{
+        cursor: "pointer",
+      }}
+    >
       <ListItemAvatar>
         <Avatar alt={user.name} src="/static/images/avatar/1.jpg" />
       </ListItemAvatar>

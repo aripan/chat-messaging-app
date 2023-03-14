@@ -132,8 +132,6 @@ export const useUpdateUsersList = (tokenData: any) => {
 
   const activeUsersList = users && usersFromDB && getActiveUsersOnly(users, usersFromDB)
 
-  console.log("🚀 ~ file: hooks.ts:22 ~ useUpdateUsersList ~ users:", activeUsersList)
-
   //! currently i don't needed them and so just commented out for now
   // return [usersList, userInfo, userInfoError, activeUsersList];
   return [activeUsersList];
